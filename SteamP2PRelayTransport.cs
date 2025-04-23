@@ -26,7 +26,7 @@ public class SteamP2PRelayTransport : NetworkTransport
     {
         SteamP2PRelayTransport transport;
 
-	// TODO: Increase buffer size.
+	    // TODO: Increase buffer size.
         byte[] buffer = new byte[1024];
         ArraySegment<byte> emptyPayload = new ArraySegment<byte>();
 
@@ -79,7 +79,7 @@ public class SteamP2PRelayTransport : NetworkTransport
     {
         SteamP2PRelayTransport transport;
 
-	// TODO: Increase buffer size.
+	    // TODO: Increase buffer size.
         byte[] buffer = new byte[1024];
         ArraySegment<byte> emptyPayload = new ArraySegment<byte>();
 
@@ -180,6 +180,8 @@ public class SteamP2PRelayTransport : NetworkTransport
     {
         clientId = 0;
         receiveTime = Time.realtimeSinceStartup;
+        payload = new ArraySegment<byte>();
+
         return NetworkEvent.Nothing;
     }
 
@@ -264,21 +266,21 @@ public class SteamP2PRelayTransport : NetworkTransport
         Debug.Log("Shutdown.");
         Steamworks.SteamClient.Shutdown();
     }
-
+    
     /// <summary>
     /// Initializes the transport
     /// </summary>
-    override public void Initialize()
+    public override void Initialize(NetworkManager networkManager = null)
     {
         Debug.Log("Initialize.");
         Steamworks.SteamNetworkingUtils.InitRelayNetworkAccess();
+
         if (debug)
         {
             SteamNetworkingUtils.DebugLevel = NetDebugOutput.Debug;
             SteamNetworkingUtils.OnDebugOutput += DebugOutput;
         }
     }
-
     void LateUpdate()
     {
         socketManager?.Receive();
