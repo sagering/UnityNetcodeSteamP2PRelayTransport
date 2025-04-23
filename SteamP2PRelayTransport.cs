@@ -26,7 +26,7 @@ public class SteamP2PRelayTransport : NetworkTransport
     {
         SteamP2PRelayTransport transport;
 
-	    // TODO: Increase buffer size.
+        // TODO: Increase buffer size.
         byte[] buffer = new byte[1024];
         ArraySegment<byte> emptyPayload = new ArraySegment<byte>();
 
@@ -67,8 +67,8 @@ public class SteamP2PRelayTransport : NetworkTransport
         public unsafe void OnMessage(IntPtr data, int size, long messageNum, long recvTime, int channel)
         {
             Debug.Log("ClientCallbacks: OnMessage");
-
-            // TODO: Assert that size <= buffer size
+            Debug.Assert(size <= buffer.Length, "Message size exceeds the max buffer length");
+            
             Marshal.Copy(data, buffer, 0, size);
 
             transport.InvokeOnTransportEvent(NetworkEvent.Data, transport.ServerClientId, new ArraySegment<byte>(buffer, 0, size), Time.realtimeSinceStartup);
@@ -79,7 +79,7 @@ public class SteamP2PRelayTransport : NetworkTransport
     {
         SteamP2PRelayTransport transport;
 
-	    // TODO: Increase buffer size.
+        // TODO: Increase buffer size.
         byte[] buffer = new byte[1024];
         ArraySegment<byte> emptyPayload = new ArraySegment<byte>();
 
@@ -266,21 +266,7 @@ public class SteamP2PRelayTransport : NetworkTransport
         Debug.Log("Shutdown.");
         Steamworks.SteamClient.Shutdown();
     }
-    
-    /// <summary>
-    /// Initializes the transport
-    /// </summary>
-    public override void Initialize(NetworkManager networkManager = null)
-    {
-        Debug.Log("Initialize.");
-        Steamworks.SteamNetworkingUtils.InitRelayNetworkAccess();
 
-        if (debug)
-        {
-            SteamNetworkingUtils.DebugLevel = NetDebugOutput.Debug;
-            SteamNetworkingUtils.OnDebugOutput += DebugOutput;
-        }
-    }
     void LateUpdate()
     {
         socketManager?.Receive();
@@ -332,5 +318,17 @@ public class SteamP2PRelayTransport : NetworkTransport
     void DebugOutput(NetDebugOutput type, string text)
     {
         Debug.Log(text);
+    }
+
+    public override void Initialize(NetworkManager networkManager = null)
+    {
+        Debug.Log("Initialize.");
+        Steamworks.SteamNetworkingUtils.InitRelayNetworkAccess();
+
+        if (debug)
+        {
+            SteamNetworkingUtils.DebugLevel = NetDebugOutput.Debug;
+            SteamNetworkingUtils.OnDebugOutput += DebugOutput;
+        }
     }
 }
