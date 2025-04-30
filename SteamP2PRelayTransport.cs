@@ -180,7 +180,7 @@ public class SteamP2PRelayTransport : NetworkTransport
     {
         clientId = 0;
         receiveTime = Time.realtimeSinceStartup;
-        payload = new ArraySegment<byte>();
+        payload = ArraySegment<byte>.Empty;
 
         return NetworkEvent.Nothing;
     }
